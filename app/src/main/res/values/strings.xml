@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Spending Tracker</string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    <string name="budget_amount_key">budget_amount</string>
+    <string name="budget_amount_default_value">5.00</string>
+</resources>

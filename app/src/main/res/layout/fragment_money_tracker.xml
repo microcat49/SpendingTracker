@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <EditText
+        android:hint="0.00"
+        android:inputType="numberDecimal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/ET_addAmount"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/scrollView2"
+        android:layout_marginRight="8dp" />
+
+    <ImageView
+        android:id="@+id/budget_indicator"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/TV_budget_left_amount"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ET_addAmount"
+        app:srcCompat="@color/underBudget"
+        app:layout_constraintRight_toLeftOf="@+id/scrollView2"
+        android:layout_marginRight="8dp" />
+
+    <TextView
+        android:id="@+id/budget_left_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Left In Budget:"
+        android:textAppearance="@android:style/TextAppearance.Holo.Large"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/budget_indicator"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/budget_indicator"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toTopOf="@+id/TV_budget_left_amount"
+        android:layout_marginTop="0dp" />
+
+    <TextView
+        android:id="@+id/TV_budget_left_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textAppearance="@android:style/TextAppearance.Holo.Large"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/budget_indicator"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/budget_indicator"
+        app:layout_constraintHorizontal_bias="0.91"
+        app:layout_constraintTop_toTopOf="@+id/budget_indicator"
+        android:layout_marginTop="0dp" />
+
+    <Button
+        android:id="@+id/B_addAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Add"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/budget_indicator"
+        app:layout_constraintRight_toLeftOf="@+id/scrollView2"
+        android:layout_marginRight="0dp"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/B_addAmount"></android.support.v7.widget.RecyclerView>
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="90dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/recycler_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.451">
+        <RadioGroup
+            android:checkedButton="@+id/RB_Food"
+            android:id="@+id/RG_select_category"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RadioButton
+                android:id="@+id/RB_Food"
+                android:text="Food"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/RB_Rent"
+                android:text="Rent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/RB_Utilities"
+                android:text="Utilities"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/RB_Transportation"
+                android:text="Transportation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/RB_Bills"
+                android:text="Bills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/RB_Leisure"
+                android:text="Leisure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

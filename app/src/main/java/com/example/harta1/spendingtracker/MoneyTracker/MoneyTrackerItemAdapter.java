@@ -1,11 +1,14 @@
 package com.example.harta1.spendingtracker.MoneyTracker;
 
 import android.database.Cursor;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -22,17 +25,17 @@ public class MoneyTrackerItemAdapter extends RecyclerView.Adapter<MoneyTrackerIt
 
     private boolean delete = false;
 
-    public MoneyTrackerItemAdapter(Cursor cursor){
-        this.cursor = cursor;
+    MoneyTrackerFragment moneyTrackerFragment;
 
+    public MoneyTrackerItemAdapter(Cursor cursor, Fragment fragment){
+        this.cursor = cursor;
+        moneyTrackerFragment = (MoneyTrackerFragment) fragment;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.money_list_item,
         parent, false);
-
-
 
         ViewHolder vh = new ViewHolder(v);
         return vh;
@@ -42,8 +45,11 @@ public class MoneyTrackerItemAdapter extends RecyclerView.Adapter<MoneyTrackerIt
     public void onBindViewHolder(ViewHolder holder, int position) {
         cursor.moveToNext();
 
-        int amount = cursor.getColumnIndex(DataBaseContract.MoneyEntry.ENTRY_AMOUNT);
-        int category = cursor.getColumnIndex(DataBaseContract.MoneyEntry.Purchase_Type);
+        int amount_column = cursor.getColumnIndex(DataBaseContract.MoneyEntry.ENTRY_AMOUNT);
+        int category_column = cursor.getColumnIndex(DataBaseContract.MoneyEntry.Purchase_Type);
+        int id_column = cursor.getColumnIndex(DataBaseContract.MoneyEntry._ID);
+
+
 
         if(delete){
             holder.delete_item.setVisibility(View.VISIBLE);
@@ -52,8 +58,18 @@ public class MoneyTrackerItemAdapter extends RecyclerView.Adapter<MoneyTrackerIt
         }
 
 
-        holder.money_value.setText(cursor.getString(amount));
-        holder.money_category.setText(cursor.getString(category));
+
+
+        try {
+            holder.money_value.setText(cursor.getString(amount_column));
+            holder.money_category.setText(cursor.getString(category_column));
+            holder.id = cursor.getInt(id_column);
+        } catch (IndexOutOfBoundsException e) {
+            Log.d("onBindViewHolder", e.toString());
+
+        } catch (Exception e){
+            Log.d("onBindViewHolder", e.toString());
+        }
     }
 
     @Override
@@ -67,6 +83,8 @@ public class MoneyTrackerItemAdapter extends RecyclerView.Adapter<MoneyTrackerIt
 
     public void swapCursor(Cursor cursor){
             this.cursor = cursor;
+
+
     }
 
 
@@ -78,10 +96,11 @@ public class MoneyTrackerItemAdapter extends RecyclerView.Adapter<MoneyTrackerIt
         }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView money_value;
         TextView money_category;
         ImageButton delete_item;
+        int id;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -89,8 +108,20 @@ public class MoneyTrackerItemAdapter extends RecyclerView.Adapter<MoneyTrackerIt
             money_value = (TextView) itemView.findViewById(R.id.TV_money_item_value);
             money_category = (TextView) itemView.findViewById(R.id.TV_moeny_item_category);
 
-        }
-    }
+            delete_item.setOnClickListener(this);
 
+        }
+
+        @Override
+        public void onClick(View v) {
+            moneyTrackerFragment.deleteItem(id);
+
+        }
+
+
+    }
+    public interface viewHolderCB{
+        void deleteItem(int id);
+    }
 
 }

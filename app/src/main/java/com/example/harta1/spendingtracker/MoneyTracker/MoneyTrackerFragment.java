@@ -33,8 +33,10 @@ import com.example.harta1.spendingtracker.Utilities.MoneyFormat;
  * Created by harta1 on 4/26/2017.
  */
 
-public class MoneyTrackerFragment extends Fragment implements MainActivity.budgetCB{
+public class MoneyTrackerFragment extends Fragment implements MainActivity.budgetCB, MoneyTrackerItemAdapter.viewHolderCB{
     private SQLiteDatabase sqLiteDatabase;
+
+
 
     MoneyEntriesDbHelper moneyEntriesDbHelper;
 
@@ -63,12 +65,13 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-
-
-
         setUpViews(v);
 
         return v;
+
+
+
+
     }
 
     @Override
@@ -79,9 +82,10 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
 
         sqLiteDatabase = moneyEntriesDbHelper.getWritableDatabase();
 
-        cursor = prepareDatabase();
+        cursor =sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null);
 
-        adapter = new MoneyTrackerItemAdapter(cursor);
+
+        adapter = new MoneyTrackerItemAdapter(cursor, this);
         recyclerView.setAdapter(adapter);
 
         updateValue();
@@ -130,18 +134,11 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
 
         sqLiteDatabase.insert(DataBaseContract.MoneyEntry.TABLE_NAME,null, values);
 
-        adapter.swapCursor(sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null));
+        cursor = sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null);
+
+        adapter.swapCursor(cursor);
         adapter.notifyDataSetChanged();
 
-
-    }
-
-    public Cursor prepareDatabase() {
-
-        Cursor cursor = sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null);
-
-
-        return cursor;
 
     }
 
@@ -188,7 +185,32 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
         adapter.changeSetting();
         adapter.notifyDataSetChanged();
 
-        adapter.swapCursor(sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null));
+        cursor = sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null);
+
+        adapter.swapCursor(cursor);
         adapter.notifyDataSetChanged();
+    }
+
+    public double getTotalSpent(){
+        double total = 0.0;
+        cursor.moveToFirst();
+
+        int value_position = cursor.getColumnIndex(DataBaseContract.MoneyEntry.ENTRY_AMOUNT);
+        while (cursor.moveToNext()){
+            total += Double.valueOf(cursor.getString(value_position));
+
+        }
+
+        return total;
+    }
+
+    @Override
+    public void deleteItem(int id) {
+        sqLiteDatabase.delete(DataBaseContract.MoneyEntry.TABLE_NAME, DataBaseContract.MoneyEntry._ID +"=" + String.valueOf(id), null);
+        cursor = sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null);
+
+        adapter.swapCursor(cursor);
+        adapter.notifyDataSetChanged();
+        updateValue();
     }
 }

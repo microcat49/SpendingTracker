@@ -1,5 +1,7 @@
 package com.example.harta1.spendingtracker.MoneyTracker;
 
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.support.v4.app.Fragment;
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,14 +31,22 @@ import com.example.harta1.spendingtracker.MainActivity;
 import com.example.harta1.spendingtracker.R;
 import com.example.harta1.spendingtracker.Utilities.MoneyFormat;
 
+import java.util.Date;
+
 /**
  * Created by harta1 on 4/26/2017.
  */
 
 public class MoneyTrackerFragment extends Fragment implements MainActivity.budgetCB, MoneyTrackerItemAdapter.viewHolderCB{
+
+    final public static int DAY = 1;
+    final public static int WEEK = 2;
+    final public static int MONTH =3;
+
+    private int query_length = 2;
+
+
     private SQLiteDatabase sqLiteDatabase;
-
-
 
     MoneyEntriesDbHelper moneyEntriesDbHelper;
 
@@ -82,7 +92,7 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
 
         sqLiteDatabase = moneyEntriesDbHelper.getWritableDatabase();
 
-        cursor =sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null);
+        cursor = queryData();
 
 
         adapter = new MoneyTrackerItemAdapter(cursor, this);
@@ -134,13 +144,40 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
 
         sqLiteDatabase.insert(DataBaseContract.MoneyEntry.TABLE_NAME,null, values);
 
-        cursor = sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null);
+        cursor = queryData();
 
         adapter.swapCursor(cursor);
         adapter.notifyDataSetChanged();
 
 
     }
+
+    public Cursor queryData(){
+
+
+        switch (query_length) {
+            case DAY:
+                return sqLiteDatabase.rawQuery("SELECT * FROM " + DataBaseContract.MoneyEntry.TABLE_NAME +
+                        " WHERE " + DataBaseContract.MoneyEntry.Date + " BETWEEN datetime('now','start of day') AND datetime('now')" +
+                        " ORDER BY " +DataBaseContract.MoneyEntry.Date + " DESC", null);
+
+            case WEEK:
+                return sqLiteDatabase.rawQuery("SELECT * FROM " + DataBaseContract.MoneyEntry.TABLE_NAME +
+                        " WHERE " + DataBaseContract.MoneyEntry.Date + " BETWEEN" + " datetime('now', 'weekday 0', '-6 day') AND datetime('now')" +
+                        " ORDER BY " +DataBaseContract.MoneyEntry.Date + " DESC", null);
+
+            case MONTH:
+                return sqLiteDatabase.rawQuery("SELECT * FROM " + DataBaseContract.MoneyEntry.TABLE_NAME +
+                        " WHERE " + DataBaseContract.MoneyEntry.Date + " BETWEEN datetime('now','localtime','start of month') AND datetime('now')" +
+                        " ORDER BY " +DataBaseContract.MoneyEntry.Date + " DESC", null);
+            default:
+                return sqLiteDatabase.rawQuery(null, null );
+
+        }
+
+
+    }
+
 
 
     @Override
@@ -158,7 +195,10 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
         String budgetAmountValue = sharedPrefernces.getString(getString(R.string.budget_amount_key), getString(R.string.budget_amount_default_value));
 
 
-        double budgetDifference =  Double.valueOf(budgetAmountValue) - moneyEntriesDbHelper.getCurrentToalSpent();
+        query_length = sharedPrefernces.getInt(getString(R.string.budget_type_key), Integer.valueOf(getString(R.string.budget_type_default_value)));
+
+
+        double budgetDifference =  Double.valueOf(budgetAmountValue) - getTotalSpent();
 
         budgetDifference *= 100;
         budgetDifference = Math.round(budgetDifference);
@@ -171,11 +211,19 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
         }
         total_spent.setText(String.valueOf(budgetDifference));
 
+        cursor = queryData();
+
+        adapter.swapCursor(cursor);
+        adapter.notifyDataSetChanged();
+
+
     }
 
     @Override
     public void setBudget() {
+
         updateValue();
+
     }
 
     @Override
@@ -185,7 +233,7 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
         adapter.changeSetting();
         adapter.notifyDataSetChanged();
 
-        cursor = sqLiteDatabase.query(DataBaseContract.MoneyEntry.TABLE_NAME, null, null, null, null, null,null);
+        cursor = queryData();
 
         adapter.swapCursor(cursor);
         adapter.notifyDataSetChanged();
@@ -193,13 +241,15 @@ public class MoneyTrackerFragment extends Fragment implements MainActivity.budge
 
     public double getTotalSpent(){
         double total = 0.0;
-        cursor.moveToFirst();
+        Cursor local_cursor = queryData();
 
-        int value_position = cursor.getColumnIndex(DataBaseContract.MoneyEntry.ENTRY_AMOUNT);
-        while (cursor.moveToNext()){
-            total += Double.valueOf(cursor.getString(value_position));
+        int value_position = local_cursor.getColumnIndex(DataBaseContract.MoneyEntry.ENTRY_AMOUNT);
+        while (local_cursor.moveToNext()){
+            total += Double.valueOf(local_cursor.getString(value_position));
 
         }
+
+        local_cursor.close();
 
         return total;
     }

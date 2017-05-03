@@ -6,4 +6,7 @@
 
     <string name="budget_amount_key">budget_amount</string>
     <string name="budget_amount_default_value">5.00</string>
+
+    <string name="budget_type_key">budget_type</string>
+    <string name="budget_type_default_value">1</string>
 </resources>

@@ -61,6 +61,7 @@ public class MoneyTrackerItemAdapter extends RecyclerView.Adapter<MoneyTrackerIt
 
 
         try {
+
             holder.money_value.setText(cursor.getString(amount_column));
             holder.money_category.setText(cursor.getString(category_column));
             holder.id = cursor.getInt(id_column);

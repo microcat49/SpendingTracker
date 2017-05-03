@@ -18,6 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.example.harta1.spendingtracker.MoneyTracker.MoneyTrackerFragment;
 
@@ -52,9 +54,11 @@ public class MainActivity extends AppCompatActivity {
                 super.onDrawerClosed(view);
 
 
+
                 SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(getString(R.string.budget_amount_key), budgetAmount.getText().toString() );
+                editor.putInt(getString(R.string.budget_type_key), translateBudgetType(view));
                 editor.commit();
 
                 moneyTrackerFragment.setBudget();
@@ -88,6 +92,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public int translateBudgetType(View view){
+        int radiobutton = ((RadioGroup) view.findViewById(R.id.RB_budget_type)).getCheckedRadioButtonId();
+
+        switch (radiobutton){
+            case R.id.RB_DAY:
+                return MoneyTrackerFragment.DAY;
+            case R.id.RB_WEEK:
+                return  MoneyTrackerFragment.WEEK;
+            case R.id.RB_MONTH:
+                return  MoneyTrackerFragment.MONTH;
+        }
+        return 3;
+    }
 
 
     @Override

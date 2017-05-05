@@ -28,4 +28,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:recyclerview-v7:25.0.+'
     testCompile 'junit:junit:4.12'
+    compile 'com.github.blackfizz:eazegraph:1.2.5l@aar'
+    compile 'com.nineoldandroids:library:2.4.0'
 }

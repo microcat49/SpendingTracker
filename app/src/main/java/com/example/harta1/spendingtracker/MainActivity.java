@@ -2,6 +2,7 @@ package com.example.harta1.spendingtracker;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,7 +22,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.example.harta1.spendingtracker.GraphData.GraphDataActivity;
 import com.example.harta1.spendingtracker.MoneyTracker.MoneyTrackerFragment;
+import com.example.harta1.spendingtracker.Utilities.MoneyFormat;
 
 import java.util.prefs.Preferences;
 
@@ -57,7 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
                 SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(getString(R.string.budget_amount_key), budgetAmount.getText().toString() );
+
+                String amount = MoneyFormat.correctMoneyFormat(budgetAmount.getText().toString());
+                if(!amount.isEmpty()) {
+                    editor.putString(getString(R.string.budget_amount_key), amount);
+                }
                 editor.putInt(getString(R.string.budget_type_key), translateBudgetType(view));
                 editor.commit();
 
@@ -120,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.MI_delete:
                 moneyTrackerFragment.deleteItems();
+                break;
+            case R.id.MI_graph:
+                Intent intent = new Intent(this, GraphDataActivity.class);
+                startActivity(intent);
 
 
         }

@@ -35,6 +35,11 @@ public class MoneyFormat {
                 return value + "00";
             }
 
+            Pattern p5 = Pattern.compile("\\.\\d+");
+            if(p5.matcher(value).matches()){
+                return value + "0";
+            }
+
         }
 
         return "";
